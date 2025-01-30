@@ -143,7 +143,6 @@ def test(model, data_loader, criterion, device):
     running_loss = 0.0
     running_corrects = 0
 
-    # do not compute gradients
     with torch.no_grad():
 
         for batch_idx, (inputs, labels) in enumerate(data_loader):
@@ -177,8 +176,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # set seed for reproducability
 torch.manual_seed(0)
 
-# hyperparameter
-# TODO: find good hyperparameters
+# hyperparameters
 batch_size = 32
 num_epochs = 30
 learning_rate =  0.01
@@ -190,4 +188,4 @@ transform = transforms.Compose([
 ])
 
 # load train and test data
-root = './Data'
+root = 'Data'
