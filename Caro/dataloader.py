@@ -1,13 +1,12 @@
 import glob
 import os
-from sklearn.model_selection import train_test_split
-import numpy as np
 import random
 
 def load_image_paths():
     os.chdir("..")
     print(f"Current working directory: {os.getcwd()}")
 
+    # for this, only relevant genre folders need to remain, rest gets deleted
     image_paths = glob.glob('./Data/*/*.jpg')
 
     return image_paths
@@ -30,5 +29,3 @@ def prep_train_test_data():
     train_data_paths, test_data_paths = train_test_split(image_paths)
 
     return train_data_paths, test_data_paths
-
-#train, test = prep_train_test_data()

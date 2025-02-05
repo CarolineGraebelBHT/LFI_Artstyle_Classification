@@ -1,5 +1,4 @@
 import time
-
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -8,6 +7,9 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
+import dataloader
+import get_labels
+import cv2
 
 CATEGORIES = {
     0: 'Abstract',
@@ -188,4 +190,90 @@ transform = transforms.Compose([
 ])
 
 # load train and test data
-root = 'Data'
+train_data_paths, test_data_paths = dataloader.prep_train_test_data()
+train_data = []
+test_data = []
+
+for path in train_data_paths:
+    img = cv2.imread(path)
+    if img is None:
+        print(f"Error: Could not load image {path}")
+    else:
+        img = cv2.resize(img, (0, 0), fx=0.5, fy=0.5)
+        train_data.append(img)
+
+for path in test_data_paths:
+    img = cv2.imread(path)
+    img = cv2.resize(img, (0, 0), fx=0.5, fy=0.5)
+    test_data.append(img)
+
+train_labels = get_labels.get_data_labels(train_data_paths)
+test_labels = get_labels.get_data_labels(test_data_paths)
+
+loader_params = {
+    'batch_size': batch_size,
+    'num_workers': 5  # increase this value to use multiprocess data loading
+}
+
+train_loader = DataLoader(dataset=train_data, shuffle=False, **loader_params)
+test_loader = DataLoader(dataset=test_data, shuffle=False, **loader_params)
+
+model = MyNeuralNetwork().to(device)
+optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
+criterion = nn.CrossEntropyLoss()
+
+train_acc_history = []
+test_acc_history = []
+
+train_loss_history = []
+test_loss_history = []
+
+best_acc = 0.0
+since = time.time()
+
+for epoch in range(num_epochs):
+
+    print('Epoch {}/{}'.format(epoch, num_epochs - 1))
+    print('-' * 10)
+
+    # train
+    training_loss, training_acc = training(model, train_loader, optimizer,
+                                           criterion, device)
+    train_loss_history.append(training_loss)
+    train_acc_history.append(training_acc)
+
+    # test
+    test_loss, test_acc = test(model, test_loader, criterion, device)
+    test_loss_history.append(test_loss)
+    test_acc_history.append(test_acc)
+
+    # overall best model
+    if test_acc > best_acc:
+        best_acc = test_acc
+        #  best_model_wts = copy.deepcopy(model.state_dict())
+
+time_elapsed = time.time() - since
+print(
+    f'Training complete in {(time_elapsed // 60):.0f}m {(time_elapsed % 60):.0f}s'
+)
+print(f'Best val Acc: {best_acc:4f}')
+
+# plot loss and accuracy curves
+train_acc_history = [h.cpu().numpy() for h in train_acc_history]
+test_acc_history = [h.cpu().numpy() for h in test_acc_history]
+
+def plot(train_history, test_history, metric, num_epochs):
+
+    plt.title(f"Validation/Test {metric} vs. Number of Training Epochs VGG-16")
+    plt.xlabel(f"Training Epochs")
+    plt.ylabel(f"Validation/Test {metric}")
+    plt.plot(range(1, num_epochs + 1), train_history, label="Train")
+    plt.plot(range(1, num_epochs + 1), test_history, label="Test")
+    plt.ylim((0, 1.))
+    plt.xticks(np.arange(1, num_epochs + 1, 1.0))
+    plt.legend()
+    plt.savefig(f"{metric}_VGG-16.png")
+    plt.show()
+
+plot(train_acc_history, test_acc_history, 'accuracy', num_epochs)
+plot(train_loss_history, test_loss_history, 'loss', num_epochs)
