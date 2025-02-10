@@ -1,14 +1,6 @@
 import torch
 import torch.nn as nn
-import prepare_image_data
-import dataloader
-import get_labels
-import cv2
-import numpy as np
 import matplotlib.pyplot as plt
-from torch.utils.data import DataLoader, TensorDataset
-
-from dataloader import train_test_split
 
 
 class MyNeuralNetwork(nn.Module):
@@ -126,7 +118,7 @@ else:
 
 def visualize_filters(layer, layer_name):
     print("Getting filter...")
-    filters = layer.weight.data.cpu().numpy()  # Get filter weights, move to CPU, convert to NumPy
+    filters = layer.weight.data.cpu().numpy()
     n_filters, n_channels, _, _ = filters.shape
 
     n_cols = 8
@@ -137,10 +129,10 @@ def visualize_filters(layer, layer_name):
     for i in range(n_filters):
         row = i // n_cols
         col = i % n_cols
-        for c in range(n_channels): # Visualize each channel of the filter
+        for c in range(n_channels):
             filter_img = filters[i, c, :, :]
-            filter_img = (filter_img - filter_img.min()) / (filter_img.max() - filter_img.min()) # Normalize
-            axes[row, col].imshow(filter_img, cmap='gray') # Most conv layers have gray scale filters
+            filter_img = (filter_img - filter_img.min()) / (filter_img.max() - filter_img.min())
+            axes[row, col].imshow(filter_img, cmap='gray')
         axes[row, col].set_xticks([])
         axes[row, col].set_yticks([])
 

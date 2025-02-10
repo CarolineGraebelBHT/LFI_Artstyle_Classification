@@ -133,20 +133,20 @@ train_labels = get_labels.get_data_labels(train_data_paths)
 test_labels_numeric = [artstyles_dict[label] for label in test_labels]
 train_labels_numeric = [artstyles_dict[label] for label in train_labels]
 
-test_data_tensor = []  # Create an empty list to hold image tensors
-for image in test_data:  # Iterate through the numpy arrays in train_date
-    image_tensor2 = torch.from_numpy(np.asarray(image)).float()  # Convert to tensor
+test_data_tensor = []
+for image in test_data:
+    image_tensor2 = torch.from_numpy(np.asarray(image)).float()
     image_tensor2 = image_tensor2.permute(2, 0, 1)
-    test_data_tensor.append(image_tensor2)  # Append the tensor to the list
-test_data_tensor = torch.stack(test_data_tensor)  # Stack the tensors after converting all images
+    test_data_tensor.append(image_tensor2)
+test_data_tensor = torch.stack(test_data_tensor)
 test_data = TensorDataset(test_data_tensor, torch.tensor(test_labels_numeric))
 
-train_data_tensor = []  # Create an empty list to hold image tensors
-for image in train_data:  # Iterate through the numpy arrays in train_data
-    image_tensor1 = torch.from_numpy(image).float()  # Convert to tensor
+train_data_tensor = []
+for image in train_data:
+    image_tensor1 = torch.from_numpy(image).float()
     image_tensor1 = image_tensor1.permute(2, 0, 1)
-    train_data_tensor.append(image_tensor1)  # Append the tensor to the list
-train_data_tensor = torch.stack(train_data_tensor)  # Stack the tensors after converting all images
+    train_data_tensor.append(image_tensor1)
+train_data_tensor = torch.stack(train_data_tensor)
 train_data = TensorDataset(train_data_tensor, torch.tensor(train_labels_numeric))
 
 test_loader = DataLoader(dataset=test_data, shuffle=False)

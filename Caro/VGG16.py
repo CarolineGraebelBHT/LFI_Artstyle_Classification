@@ -213,28 +213,25 @@ if __name__ == '__main__':
     train_labels_numeric = [artstyles_dict[label] for label in train_labels]
     test_labels_numeric = [artstyles_dict[label] for label in test_labels]
 
-    #train_data = [torch.from_numpy(image).float() for image in train_data]
-    #test_data = [torch.from_numpy(image).float() for image in test_data]
-
-    train_data_tensor = []  # Create an empty list to hold image tensors
-    for image in train_data:  # Iterate through the numpy arrays in train_data
+    train_data_tensor = []
+    for image in train_data:
         image_tensor1 = torch.from_numpy(image).float()  # Convert to tensor
         image_tensor1 = image_tensor1.permute(2, 0, 1)
         train_data_tensor.append(image_tensor1)  # Append the tensor to the list
     train_data_tensor = torch.stack(train_data_tensor)  # Stack the tensors after converting all images
     train_data = TensorDataset(train_data_tensor, torch.tensor(train_labels_numeric))
 
-    test_data_tensor = []  # Create an empty list to hold image tensors
-    for image in test_data:  # Iterate through the numpy arrays in train_date
-        image_tensor2 = torch.from_numpy(np.asarray(image)).float()  # Convert to tensor
+    test_data_tensor = []
+    for image in test_data:
+        image_tensor2 = torch.from_numpy(np.asarray(image)).float()
         image_tensor2 = image_tensor2.permute(2, 0, 1)
-        test_data_tensor.append(image_tensor2)  # Append the tensor to the list
-    test_data_tensor = torch.stack(test_data_tensor)  # Stack the tensors after converting all images
+        test_data_tensor.append(image_tensor2)
+    test_data_tensor = torch.stack(test_data_tensor)
     test_data = TensorDataset(test_data_tensor, torch.tensor(test_labels_numeric))
 
     loader_params = {
         'batch_size': batch_size,
-        'num_workers': 5  # increase this value to use multiprocess data loading
+        'num_workers': 5
     }
 
     train_loader = DataLoader(dataset=train_data, shuffle=False, **loader_params)
@@ -275,9 +272,9 @@ if __name__ == '__main__':
             best_acc = test_acc
             #best_model_wts = copy.deepcopy(model.state_dict())
 
-    #project_root = "C:/Users/carol/Dropbox/DataScience/Semester3/Learning from Images/Project/LFI_Artstyle_Classification/Caro/"
-    #model_save_path = os.path.join(project_root, "vgg16_model.pth")
-    #torch.save(model.state_dict(), model_save_path)
+    project_root = "C:/Users/carol/Dropbox/DataScience/Semester3/Learning from Images/Project/LFI_Artstyle_Classification/Caro/"
+    model_save_path = os.path.join(project_root, "vgg16_model.pth")
+    torch.save(model.state_dict(), model_save_path)
 
     time_elapsed = time.time() - since
     print(

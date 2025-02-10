@@ -2,7 +2,6 @@ import cv2
 import dataloader
 import numpy as np
 
-# !!! ADAPT AMOUNT OF IMAGES
 def crop_to_largest_square(img):
     height, width, _ = img.shape
 
