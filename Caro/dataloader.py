@@ -1,22 +1,19 @@
 import glob
-import os
 import random
 
 def load_image_paths():
-    os.chdir("..")
-    print(f"Current working directory: {os.getcwd()}")
 
     # for this, only relevant genre folders need to remain, rest gets deleted
-    image_paths = glob.glob('./Data/*/*.jpg')
+    image_paths = glob.glob('.././Data/*/*.jpg')
 
     return image_paths
 
 def train_test_split(image_paths, train_ratio=0.7, seed=42):
-    n = len(image_paths)
-    train_size = int(n * train_ratio)
-
     random.seed(seed)
     random.shuffle(image_paths)
+    image_paths = image_paths[0:10000]
+    n = len(image_paths)
+    train_size = int(n * train_ratio)
 
     train_list = image_paths[:train_size]
     test_list = image_paths[train_size:]

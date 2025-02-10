@@ -1,14 +1,16 @@
 import re
+import dataloader
 
 
 def get_data_labels(path_list):
+    print("Preparing labels...")
     artstyles = []
     for path in path_list:
+        # match word after Data\ in path which holds the correct artstyle
         pattern = r"Data\\(.*?)\\"
-
         match = re.search(pattern, path)[1]
         if match:
-            artstyle_found = match  # Store the matched label
-        artstyles.append(artstyle_found)  # Add the found label or None if not found to the result list
+            artstyle_found = match
+        artstyles.append(artstyle_found)
 
     return artstyles
