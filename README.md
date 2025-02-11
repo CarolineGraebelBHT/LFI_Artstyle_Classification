@@ -67,7 +67,7 @@ This is not the full shell history of the renaming, the shown lines should serve
 To make the import easier and save space (as the whole dataset is bigger than 30GB), all art style folders that are not relevant to this project got deleted. Because of that, instead of selecting folders to be read, it can just read all files that are there (load_image_paths()). <br>
 There’s also a function to do the train-test-split. For this, all paths get shuffled (with a seed) and the first 10000 images get selected. As introduced earlier, VGG-16 is really hardware-intensive and because I had to train the model on CPU. Pytorch has stopped supporting using AMD GPUs with ROCm for model training [5].
 
-![Screenshot containing an oversight of available Pytorch Versions for Download, with ROCm not being available for Windows.](https://github.com/CarolineGraebelBHT/LFI_Artstyle_Classification/blob/main/Caro/Pictures/Screenshot%202025-02-05%20160615.png)
+![Screenshot containing an oversight of available Pytorch Versions for Download, with ROCm not being available for Windows.](https://github.com/CarolineGraebelBHT/LFI_Artstyle_Classification/blob/main/Caro/Pictures/Screenshot%202025-02-11%20124824.png)
 
 A training on all 41k images on CPU would’ve taken 5 days, calculated from the benchmark of 200 badges / hour in CPU processing power. With 10000 images, it took ~1,5 days. I decided for a 70:30 split per default. The function then returns the finished lists with the paths to the training and testing data.
 
