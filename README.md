@@ -77,6 +77,7 @@ This approach makes it possible to have different seeds for shuffling and differ
 #### The Model (VGG16.py)
 The VGG-16 model architecture gets captured in the class MyNeuralNetwork. As mentioned in the model introduction, VGG-16 mainly consists of Convolutional layers that use a 3x3-kernel and a padding of 1. ReLu is used as an activation function. At the end of each of the five stages, the results are pooled in the MaxPool2d()-function with a 2x2-kernel and a stride of 2. The classifier uses linear transformations to calculate the probabilities for each art style depending on the input image. <br>
 The model parameters are:
+* not pretrained
 * Batch size: 32
 * Number of epochs: 20
 * Learning rate: 0.001
@@ -112,7 +113,28 @@ To better understand how well the model is able to predict art styles, differenc
 
 ![Plot containing the prediction accuracy by art style for the testing set.](https://github.com/CarolineGraebelBHT/LFI_Artstyle_Classification/blob/main/Caro/Pictures/Testing_Pred_Acc.png)
 
-The overall higher accuracy in the training data shows well. Realism and Impressionism gets correctly classified in more than 80% and 70% of cases respectively. The model also performs comparatively strongly for classifying Baroque, even if it isn’t as strongly represented in the data as Realism and Impressionism. For Expressionism, Abstract Expressionism, Cubism and High Renaissance, the performance is much worse. This makes sense, as modern art styles are more diverse in techniques and the High Renaissance and Cubism are very underrepresented in the dataset. The testing predictions mirror the performance of the training predictions in ranking of art styles. Realism, Impressionism and Baroque are still strongest but perform worse on the testing data which is explained by the model not knowing the images it is trying to predict. For Expressionism, Abstract Expressionism, Cubism and High Renaissance the model performs really badly on the testing data. These plots show that the model isn’t able to adapt to the more diverse art styles with the given training data. Both the diversity of modern art, the information loss through cropping and the underrepresentation issues in the dataset might be reasons why this is the case.
+The overall higher accuracy in the training data shows well. Realism and Impressionism gets correctly classified in more than 80% and 70% of cases respectively. The model also performs comparatively strongly for classifying Baroque, even if it isn’t as strongly represented in the data as Realism and Impressionism. For Expressionism, Abstract Expressionism, Cubism and High Renaissance, the performance is much worse. Modern art styles are more diverse in techniques and the High Renaissance and Cubism are very underrepresented in the dataset. The testing predictions mirror the performance of the training predictions in ranking of art styles. Realism, Impressionism and Baroque are still strongest but perform worse on the testing data which is explained by the model not knowing the images it is trying to predict. For Expressionism, Abstract Expressionism, Cubism and High Renaissance the model performs really badly on the testing data. These plots show that the model isn’t able to adapt to the more diverse art styles with the given training data. <br>
+The accuracy ratings per class are somewhat similar to the distribution of the classes. It will be investigated whether this is due to class imbalance, too little data, or both.
+
+##### Data Preparation for training a second model with balance in art styles (dataloader2.py)
+To implement balancing, now paths are loaded for each art style folder respectively. For each art style, 1000 images are selected and split into training and testing data. Afterwards, these seven sub lists then get concatenated into two big training and testing data path lists and shuffled. In comparison to the first model, instead of 10k now there are only 7k images used. The model pipeline used for the data is the same as for the first model.
+
+##### Looking at accuracy by art style again for the second model
+The model pipeline hasn't been changed for training the second model. The model had worse accuracy, peaking at only 43%. The development of the training performance again is overall stagnant.
+
+![Plot of accuracy over epochs for the second VGG-16 model with balanced classes.](https://github.com/CarolineGraebelBHT/LFI_Artstyle_Classification/blob/main/Caro/Pictures/accuracy_VGG-16_balanced.png)
+
+The change in accuracy for each class on the testing set is as follows:
+
+![Plot containing the prediction accuracy by art style for the testing set with balanced data.](https://github.com/CarolineGraebelBHT/LFI_Artstyle_Classification/blob/main/Caro/Pictures/Testing_Prediction_balanced.png)
+
+The balancing of the classes had a positive impact on the consistency of the model. Instead of only three classes reaching an accuracy around 60% or higher, now five classes are detected consistently well. However, the overall accuracy has decreased.
+
+##### Discussion
+The development of the model was strongly constrained by hardware limitations. The goal was to check out the most recent CNN methods to classify art. Since VGG-16 has so many parameters, a cluster or at least powerful Nvidia GPU is needed to make training times tolerable. This couldn't be provided and therefore the resulting model's capabilities is unsatisfying. The data used was too little and for the first model too unbalanced to achieve good prediction power. <br>
+Even though the parameters of the model worked out on a test run with 1000 images, the problems of the model could also be linked to issues with the learning rate that weren't apparent in the hyper parameter testing. Furthermore, it could clearly be shown that the art classes should be balanced when training a model, as the model strongly fits itself to data that is comparatively overrepresented. A successful VGG-16 model needs to be trained with many thousands of images per art style to ensure that the art style is well represented and varied enough for a proper classification by the model. How many images exactly are a good benchmark couldn't be explored due to the hardware constraints. <br>
+Art styles that have a very consistent style over different artists like Impressionism and Cubism were shown to be well captured by the model when the classes are balanced, unlike Expressionism and Realism where artists use varying techniques and styles to make their vision come true. This in turn negatively impacts accuracy, so that a better model might be created by just leaving out Realism and Expressionism. <br>
+The images have been cropped to achieve a consistent image size for the model. It would be interesting to see if padding them to a square might be a better alternative, even though when making the image smaller, again details would be lost. The cropping was done under the assumption, that generally the most important image parts are placed in or near the center. However, this isn't always a valid assumption, especially for modern art styles.
 
 ### ResNet
 #### Introduction
