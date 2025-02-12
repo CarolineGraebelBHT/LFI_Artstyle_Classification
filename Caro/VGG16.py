@@ -4,7 +4,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
-from torchvision import transforms
 import torch.multiprocessing as mp
 import get_labels
 import time
@@ -20,6 +19,9 @@ artstyles_dict = {
     'Impressionism': 5,
     'Realism': 6
 }
+
+project_root = "C:/Users/carol/Dropbox/DataScience/Semester3/Learning from Images/Project/LFI_Artstyle_Classification/Caro/"
+model_save_path = os.path.join(project_root, "vgg16_model.pth")
 
 class MyNeuralNetwork(nn.Module):
     def __init__(self):
@@ -270,11 +272,7 @@ if __name__ == '__main__':
         # overall best model
         if test_acc > best_acc:
             best_acc = test_acc
-            #best_model_wts = copy.deepcopy(model.state_dict())
-
-    project_root = "C:/Users/carol/Dropbox/DataScience/Semester3/Learning from Images/Project/LFI_Artstyle_Classification/Caro/"
-    model_save_path = os.path.join(project_root, "vgg16_model.pth")
-    torch.save(model.state_dict(), model_save_path)
+            torch.save(model.state_dict(), model_save_path)
 
     time_elapsed = time.time() - since
     print(

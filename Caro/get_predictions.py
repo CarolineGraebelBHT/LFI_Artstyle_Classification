@@ -6,6 +6,8 @@ import numpy as np
 from torch.utils.data import DataLoader, TensorDataset
 import pandas as pd
 
+"""This script generates prediction data for a trained VGG-16 model."""
+
 class MyNeuralNetwork(nn.Module):
     def __init__(self):
         super(MyNeuralNetwork, self).__init__()
@@ -99,7 +101,7 @@ artstyles_dict = {
 
 project_root = "C:/Users/carol/Dropbox/DataScience/Semester3/Learning from Images/Project/LFI_Artstyle_Classification/Caro/"
 model = MyNeuralNetwork()
-model.load_state_dict(torch.load(project_root + "vgg16_model2.pth", map_location=torch.device('cpu')))
+model.load_state_dict(torch.load(project_root + "vgg16_model.pth", map_location=torch.device('cpu')))
 
 def test(model, data_loader, device):
     model.eval()
@@ -160,11 +162,11 @@ preds_list = [pred.item() for pred in all_predictions]
 labels_list = [label.item() for label in all_labels]
 
 df_testpred = pd.DataFrame({'TestPredictions': preds_list, 'True Values': labels_list})
-df_testpred.to_csv("TestPredictions.csv", index=False)
+df_testpred.to_csv("TestPredictions2.csv", index=False)
 
 all_predictions, all_labels = test(model, train_loader, device)
 preds_list = [pred.item() for pred in all_predictions]
 labels_list = [label.item() for label in all_labels]
 
 df_testpred = pd.DataFrame({'TrainPredictions': preds_list, 'True Values': labels_list})
-df_testpred.to_csv("TrainPredictions.csv", index=False)
+df_testpred.to_csv("TrainPredictions2.csv", index=False)

@@ -1,8 +1,10 @@
 import cv2
+import dataloader2
 import dataloader
 import numpy as np
 
 def crop_to_largest_square(img):
+    """This function crops the biggest possible square image (depending on the size and ratio of the image sides)."""
     height, width, _ = img.shape
 
     # prepare biggest possible square out of the image by pixels
@@ -18,6 +20,9 @@ def crop_to_largest_square(img):
     return cropped_img
 
 def prepare_image_data():
+    """This function loads the paths for the images. It loads in the image data, crops them to largest square,
+    resizes them to 224x224 pixels and normalizes the colour values. It returns both the training and testing image
+    sets and the according paths."""
     print("Loading image paths...")
     train_data_paths, test_data_paths = dataloader.prep_train_test_data()
     train_data = []
@@ -46,9 +51,3 @@ def prepare_image_data():
             test_data.append(img)
 
     return train_data, test_data, train_data_paths, test_data_paths
-
-#train_data, test_data, train_data_paths, test_data_paths = prepare_image_data()
-#cv2.imshow("Image train", train_data[0])
-#cv2.imshow("Image test", test_data[0])
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()

@@ -85,6 +85,7 @@ class MyNeuralNetwork(nn.Module):
         return "VGG-16"
 
 
+"""This script visualizes kernels using PyTorch for selected layers of the model."""
 
 project_root = "C:/Users/carol/Dropbox/DataScience/Semester3/Learning from Images/Project/LFI_Artstyle_Classification/Caro/"
 model = MyNeuralNetwork()
