@@ -115,6 +115,122 @@ To better understand how well the model is able to predict art styles, differenc
 The overall higher accuracy in the training data shows well. Realism and Impressionism gets correctly classified in more than 80% and 70% of cases respectively. The model also performs comparatively strongly for classifying Baroque, even if it isn’t as strongly represented in the data as Realism and Impressionism. For Expressionism, Abstract Expressionism, Cubism and High Renaissance, the performance is much worse. This makes sense, as modern art styles are more diverse in techniques and the High Renaissance and Cubism are very underrepresented in the dataset. The testing predictions mirror the performance of the training predictions in ranking of art styles. Realism, Impressionism and Baroque are still strongest but perform worse on the testing data which is explained by the model not knowing the images it is trying to predict. For Expressionism, Abstract Expressionism, Cubism and High Renaissance the model performs really badly on the testing data. These plots show that the model isn’t able to adapt to the more diverse art styles with the given training data. Both the diversity of modern art, the information loss through cropping and the underrepresentation issues in the dataset might be reasons why this is the case.
 
 ### ResNet
+#### Introduction
+ResNet-50 is a deep convolutional neural network (CNN) that belongs to the ResNet (Residual Network) family, which was introduced in 2015 by Microsoft Research. The key innovation of ResNet is the use of residual learning through skip connections, which allows the network to train very deep models without suffering from the vanishing gradient problem. ResNet-50 consists of 50 layers and is composed of bottleneck blocks that help in efficient feature extraction and computational optimization. 
+Among various versions of ResNet (ResNet-18, ResNet-34, ResNet-50, ResNet-101, ResNet-152), ResNet-50 is widely used due to its balance between accuracy and computational efficiency. Visualization [7] of ResNet-50 architecture is provided in the image below.
+
+![ResNet-50 model architecture](https://raw.githubusercontent.com/CarolineGraebelBHT/LFI_Artstyle_Classification/main/Kseniia/ResNet50_model_architecture.png)
+
+ResNet-50 is a powerful deep learning model widely used in computer vision due to its ability to overcome the vanishing gradient problem with residual connections. These skip connections enable efficient training of deep networks without performance degradation. ResNet-50 achieves high accuracy on benchmark datasets and is commonly used for image classification, object detection, and segmentation, often serving as a backbone for transfer learning.
+
+However, it comes with challenges. Its high computational cost requires powerful hardware for efficient training and inference. On smaller datasets, it may overfit without proper fine-tuning. Additionally, it has longer inference times compared to lightweight models like MobileNet, making it less suitable for real-time applications. Effective hyperparameter tuning is essential for optimal performance.
+Despite these limitations, ResNet-50 remains a powerful, versatile model that serves as the foundation for many deep learning applications
+
+#### Preparing the Data
+The data preparation process  for ResNet-50 followed the same approach as described in the VGG-16 Preparing Data section. 
+
+#### Fixing Corrupted Filenames (path_fix.py, img_path.py)
+In addition to the approach used in the VGG-16 Preparing Data section, the script path_fix.py was created to automate the process of fixing corrupted filenames. This script addresses encoding issues that prevent Python from correctly loading some image files. It systematically scans all image filenames in the dataset, identifies corrupted characters, and renames the files to ensure they are accessible during training.
+
+img_path.py file is designed to detect corrupt image files within a dataset by using OpenCV to check if each image is readable. It extracts file paths from the dataset, including handling ImageFolder and Subset datasets, and uses multithreading to speed up the validation process. The script helps ensure that all images can be correctly loaded before training, preventing errors during model execution.
+
+#### Data Preprocessing and Splitting (dataload.py)
+Before training the model, the dataset undergoes a series of preprocessing steps to ensure consistency and improve generalization. The dataset is loaded using torchvision.datasets.ImageFolder, which organizes images based on their directory structure. 
+##### Data Splitting
+To train and evaluate the model effectively, the dataset is divided into three subsets:
+- **Training Set (70%):** Used to update the model weights.
+- **Validation Set (15%):** Used to monitor model performance and tune hyperparameters.
+- **Test Set (15%):** Used for final model evaluation.
+
+**Total images:** 47186
+**Train:** 33030, **Validation:** 7077, **Test:** 7079.
+
+Data augmentation techniques such as random cropping, horizontal flipping, and rotation were used to improve generalization. The images were normalized to a mean of 0.5 and a standard deviation of 0.5. The dataset is split using random_split() from torch.utils.data, ensuring a balanced and unbiased distribution across classes. However, If certain art styles have significantly fewer images, they may be underrepresented (or missing) in validation or test sets.
+
+For cases where rapid prototyping or debugging is needed, a Quick Test Mode is implemented:
+- Only 3,000 images from the training set and 500 from the validation set are used.
+- This reduces training time while allowing the model to be tested on a smaller subset.
+##### Data Loading:
+The processed data is wrapped into DataLoader objects, which handle efficient batch loading:
+- train_loader: Loads shuffled training data for stochastic gradient descent (SGD).
+- val_loader: Loads validation data without shuffling.
+- test_loader: Loads test data for final evaluation.
+These preprocessing and splitting techniques ensure an efficient training pipeline while maintaining data diversity and preventing overfitting.
+
+#### System Setup
+The ResNet-50 model was trained using PyTorch with CUDA 12.8, leveraging GPU acceleration to significantly speed up the training process. Training a deep learning model like ResNet-50 on a CPU would be extremely slow due to the high computational requirements, especially when working with large datasets like this (47186 images). By utilizing a GPU, matrix operations and tensor computations are parallelized, allowing for faster backpropagation and weight updates.
+
+#### Model ResNet-50 (ResNet.py)
+The ResNet-50 model was implemented from scratch using PyTorch. As was mentioned, the key innovation of ResNet is its residual connections, which help overcome the vanishing gradient problem by allowing gradients to flow through the network more efficiently. This enables training deeper networks without performance degradation. 
+The architecture of ResNet-50 includes the following key components:
+1. **Initial Convolutional Layer:**
+   - A 7×7 convolution with 64 filters is applied to the input images.
+   - A Batch Normalization (BN) layer stabilizes training.
+   - A Max Pooling layer reduces the spatial dimensions before feeding into deeper layers.
+2. **Residual Bottleneck Blocks:**
+   - Unlike traditional convolutional layers, ResNet-50 uses Bottleneck Blocks to improve efficiency.
+   - Each block consists of:
+      - 1×1 Convolution (reduces dimensionality)
+      - 3×3 Convolution (extracts features)
+      - 1×1 Convolution (restores dimensionality)
+   - Skip connections add the input (residual) directly to the output, helping to preserve important information and ensure smooth gradient flow.
+3. **Layer Structure:**
+   - The network consists of 4 main stages:
+      - Layer 1: 3 Bottleneck Blocks
+      - Layer 2: 4 Bottleneck Blocks
+      - Layer 3: 6 Bottleneck Blocks
+      - Layer 4: 3 Bottleneck Blocks
+   - These layers gradually increase the number of channels, making feature extraction more powerful at deeper levels.
+4. **Global Average Pooling & Fully Connected Layer:**
+   - After the final convolutional layers, an Adaptive Average Pooling layer reduces the feature maps to a 1×1 spatial size.
+   - A fully connected (FC) layer with 2048 input features maps the extracted features to the final number of classes (14 different art styles).
+
+##### Training and Implementation Considerations
+- Batch Normalization (BN) was used in every layer to help stabilize gradients and improve convergence.
+- Skip connections (shortcuts) were implemented to improve training stability and reduce the risk of vanishing gradients.
+- The final fully connected layer was adjusted to match the number of art styles (14 classes) in the dataset.
+
+#### Hyperparameters:
+- **Batch Size:** 64
+- **Epochs:** 50
+- **Learning Rate:** 0.001 (decayed by a factor of 0.5 every 10 epochs)
+- **Optimizer:** Stochastic Gradient Descent (SGD) with Momentum = 0.9
+- **Loss Function:** CrossEntropyLoss
+- **Early Stopping:** Stop training if validation loss does not improve for 10 consecutive epochs.
+
+The model is evaluated for accuracy and cross-entropy loss at each epoch. The version that achieves the highest validation accuracy is saved as the best model. The validation and final test accuracy, as well as the validation and final test loss, are visualized in the plots below.
+
+![Validation and test accuracy](https://raw.githubusercontent.com/CarolineGraebelBHT/LFI_Artstyle_Classification/main/Kseniia/results/val_test_accuracy_plot.png) 
+
+![Validation and test loss](https://raw.githubusercontent.com/CarolineGraebelBHT/LFI_Artstyle_Classification/main/Kseniia/results/val_test_loss_plot.png) 
+
+#### Training and Evaluating the ResNet-50 Model (main.py)
+The main.py script is the core of the project, responsible for training, validating, testing, and visualizing predictions using a ResNet-50 deep learning model for art style classification. The key steps in this script include loading the dataset, training the model, evaluating its performance, saving the best model, and visualizing predictions. 
+
+A function predict_multiple_images selects 6 random test images, predicts their art style, and compares the predicted label to the real label. The predictions are saved as "results/test_predictions.png" and displayed. The visualization of six random test images, as implemented in main.py, is also available separately in the visualize_prediction.py file for independent evaluation and testing. 
+
+This script automates the end-to-end deep learning pipeline, including data loading, model training, evaluation, and visualization. It ensures that the best-performing model is saved and used for further inference. By leveraging CUDA, the script allows efficient training, which would otherwise be computationally expensive on a CPU. The final trained model can be used to classify new paintings into their respective art styles.
+
+#### Results
+#### Training Performance:
+- **Total Training Time:** 631 minutes (≈10.5 hours)
+- **Best Model Epoch:** 31 (Validation Accuracy = 56.65%)
+- **Final Test Accuracy:** 57.41%
+- **Final Test Loss:** 1.2467
+
+The ResNet-50 model was trained for 41 epochs before early stopping was triggered due to no significant improvement in validation loss. The best model was saved at epoch 31, achieving a validation accuracy of 56.65% and a validation loss of 1.2473. The final test accuracy reached 57.41%, demonstrating the model's ability to generalize to unseen data.
+
+The training process lasted 631 minutes (10.5 hours), utilizing CUDA 12.8 for acceleration. The accuracy and loss trends across epochs indicate a steady improvement, with occasional fluctuations. The final model's predictions on test images show a mix of correct and incorrect classifications, highlighting strengths and areas for potential improvement.
+
+The visualization of predictions is shown below.
+
+![The visualization of predictions](https://raw.githubusercontent.com/CarolineGraebelBHT/LFI_Artstyle_Classification/main/Kseniia/results/random_predictions.png) 
+
+While the results indicate the model's ability to classify art styles, further optimizations such as data augmentation, hyperparameter tuning, or using a larger dataset could enhance its performance. Additionally, instead of randomly splitting the dataset, organizing the data into train, validation, and test sets based on folders/classes could ensure a more balanced and structured split, potentially improving generalization. Moreover, addressing class imbalance by adding more images to underrepresented classes could help the model learn more evenly across all categories. 
+Overall, the model provides a solid foundation for automated art style classification.
+
+
+
 
 ### GoogleNet
 
