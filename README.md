@@ -7,6 +7,12 @@ Authors: Caroline Graebel, Kseniia Holovchenko, Naim Iskandar Zahari
 2. The images in the WikiArt dataset were obtained from WikiArt.org. The authors are neither responsible for the content nor the meaning of these images.
 3. By using the WikiArt dataset, you agree to obey the terms and conditions of WikiArt.org.
 
+## Motivation
+Combines art, technology, and machine learning to create a practical tool for automatic style classification.
+
+## Goal
+Develop a ML model to classify paintings into distinct art styles using visual features.
+
 ## Project Dataset
 
 ### WikiArt
@@ -248,10 +254,17 @@ The visualization of predictions is shown below.
 
 ![The visualization of predictions](https://raw.githubusercontent.com/CarolineGraebelBHT/LFI_Artstyle_Classification/main/Kseniia/results/random_predictions.png) 
 
+##### Confusion Matrix Analysis (visual_confusion_matrix.py)
+The confusion matrix  in visual_confusion_matrix.py visualizes the model’s classification performance, highlighting correct predictions (diagonal) and misclassifications (off-diagonal). Since class sizes vary, the matrix is normalized to show percentages per class for better interpretability. This helps identify frequently confused styles and potential improvements like data balancing or augmentation. The matrix is shown below.
+![Confusion Matrix](https://raw.githubusercontent.com/CarolineGraebelBHT/LFI_Artstyle_Classification/main/Kseniia/results/confusion_matrix.png) 
+
+##### Class-Wise Accuracy Analysis(visual_class_wise_accuracy.py)
+The class-wise accuracy plot in visual_class_wise_accuracy.py provides insight into how well the model performs across different art styles. Some classes achieve higher accuracy, while others may suffer due to dataset imbalance or similarities between styles. This analysis helps identify areas for improvement, such as data balancing or additional fine-tuning. The bar plot is shown below.
+
+![Confusion Matrix](https://raw.githubusercontent.com/CarolineGraebelBHT/LFI_Artstyle_Classification/main/Kseniia/results/class_wise_accuracy.png) 
+
 While the results indicate the model's ability to classify art styles, further optimizations such as data augmentation, hyperparameter tuning, or using a larger dataset could enhance its performance. Additionally, instead of randomly splitting the dataset, organizing the data into train, validation, and test sets based on folders/classes could ensure a more balanced and structured split, potentially improving generalization. Moreover, addressing class imbalance by adding more images to underrepresented classes could help the model learn more evenly across all categories. 
 Overall, the model provides a solid foundation for automated art style classification.
-
-
 
 
 ### GoogleNet
