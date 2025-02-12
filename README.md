@@ -267,7 +267,62 @@ While the results indicate the model's ability to classify art styles, further o
 Overall, the model provides a solid foundation for automated art style classification.
 
 
-### GoogleNet
+### GoogLeNet
+
+GoogLeNet, introduced in the 2014 ILSVRC competition, is a deep convolutional neural network (CNN) known for its **Inception modules**, which improve computational efficiency by using multiple filter sizes (1x1, 3x3, and 5x5) in parallel. It also employs **1x1 convolutions** to reduce dimensionality before applying larger convolutions, significantly lowering computational cost. 
+Beyond image classification, GoogLeNet has been adapted for various tasks, including object detection (e.g., Faster R-CNN with Inception), medical imaging analysis, and scene recognition. 
+Using a **pretrained model** when training a classification model with the GoogLeNet architecture provides several benefits:
+1. Faster Training & Convergence
+- A pretrained GoogLeNet model has already been trained on a large dataset (e.g., ImageNet with millions of images), meaning it has learned general visual features such as edges, textures, and object shapes.
+- Start with a model that already knows useful representations, requiring fewer epochs to converge.
+2. Better Performance with Limited Data
+- A pretrained GoogLeNet model transfers learned knowledge, making it more robust when training on a small dataset.
+3. Feature Extraction vs. Fine-Tuning
+- Feature Extraction: Freeze most layers and only train the final classification layer. This is useful if your dataset is small and similar to ImageNet categories.
+- Fine-Tuning: Unfreeze some deeper layers and train them on the dataset. This adapts the model to new features, which is useful if the dataset is very different from ImageNet.
+4. Computational Efficiency
+- Training a deep model like GoogLeNet from scratch requires significant computational power. Using a pretrained model saves time and reduces the need for high-end GPUs.
+
+**When To Use a Pretrained GoogLeNet Model?**
+- Dataset is **small** or lacks diversity.
+- To achieve **high accuracy quickly**.
+- **Save compute resources** and avoid long training times.
+- Task is similar to ImageNet (e.g., classifying common objects).
+
+#### Implementing the Model
+
+**Preparing the Data (model_googlenet.ipynb)**
+The dataset for classification would be taken from the listed art styles mentioned above. The folder names will be the 14 classes for GoogLeNet to train the classification model.
+
+The dimension of the images vary a lot and a standard image size is needed to effectively train the classification model. Initializing a transformation to resize the images to 128x128 using torchvision.transforms() from the torchvision module.
+
+![Transforming the images](https://github.com/user-attachments/assets/9093f586-7bb4-49ce-9db5-05ed178bb5b1)
+
+The transforms.Compose() function chains multiple image transformations in a pipeline. The mean and std parameter in transforms.Normalize() normalizes the pixel value and are applied to each RGB channel. This transformation method helps the model to train faster and to generalize better around zero mean. 
+
+Next, the dataset is split randomly into a training set and validation set for the model training and model evaluation. A 70:30 split has been configured for the training set and validation set respectively. 
+
+**Loading GoogLeNet**
+The GoogLeNet model is installed with the torchvision package and then loaded from the torchvision.models module. An advantage included in the GoogLeNet model is the parameter to train a classification model with the pretrained model with ImageNet. Training the model with the pretrained model with ImageNet provides several advantage, namely:
+- Better model performance with limited dataset
+- Efficient computation as using a pretrained model saves time and reduces CPU usage
+
+**Training the Model**
+
+Implementing the GoogLeNet architecture with the dataset is a straightforward process. The parameters for the model are similar to conventional Convolutional Neural Network architectures, with the exception of the option to use the pretrained model for training. In particular, the parameters include **learning rate**, and **epochs**. 
+
+The parameters for the model training are as follows:
+1. Using pretrained model: ✅
+2. Epochs: 10
+3. Learning rate: 0.001
+4. Batch size: 64
+5. Loss function: Cross Entropy Loss
+6. Optimizer: Adam
+
+**Model Performance**
+
+The model performance in the dataset is satisfactory. The model accuracy and loss progressively improve over epochs. The accuracy of the model in the training set is at **71.3%** from the last epoch and the accuracy in the validation set averages at **61.2%** in the last 5 epochs, where the highest reaches **63.0%**.
+
 
 
 # Resources
