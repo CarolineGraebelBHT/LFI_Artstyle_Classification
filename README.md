@@ -296,7 +296,7 @@ The dataset for classification would be taken from the listed art styles mention
 
 The dimension of the images vary a lot and a standard image size is needed to effectively train the classification model. Initializing a transformation to resize the images to 128x128 using torchvision.transforms() from the torchvision module.
 
-![Transforming the images](https://github.com/user-attachments/assets/9093f586-7bb4-49ce-9db5-05ed178bb5b1)
+![Transforming the images](https://raw.githubusercontent.com/CarolineGraebelBHT/LFI_Artstyle_Classification/main/Naim/googlenet_transformimages.png)
 
 The transforms.Compose() function chains multiple image transformations in a pipeline. The mean and std parameter in transforms.Normalize() normalizes the pixel value and are applied to each RGB channel. This transformation method helps the model to train faster and to generalize better around zero mean. 
 
@@ -321,9 +321,11 @@ The parameters for the model training are as follows:
 
 **Model Performance**
 
-The model performance in the dataset is satisfactory. The model accuracy and loss progressively improve over epochs. The accuracy of the model in the training set is at **71.3%** from the last epoch and the accuracy in the validation set averages at **61.2%** in the last 5 epochs, where the highest reaches **63.0%**.
+The model performance in the dataset is satisfactory. The model accuracy and loss progressively improve over epochs. The accuracy of the model in the training set is at **90.6%** from the last epoch and the accuracy in the validation set averages at **67.1%** on the fourth epoch.
 
+![Transforming the images](https://raw.githubusercontent.com/CarolineGraebelBHT/LFI_Artstyle_Classification/main/Naim/googlenet_modelaccuracy.png)
 
+![Transforming the images](https://raw.githubusercontent.com/CarolineGraebelBHT/LFI_Artstyle_Classification/main/Naim/googlenet_modelclassaccuracy.png)
 
 # Resources
 1. https://www.wikiart.org/
@@ -331,7 +333,8 @@ The model performance in the dataset is satisfactory. The model accuracy and los
 3. https://archive.org/details/wikiart-stylegan2-conditional-model
 4. https://bueltge.de/wp-content/download/wk/utf-8_kodierungen.pdf 
 5. https://pytorch.org/get-started/locally/ 
-6. https://medium.com/@mygreatlearning/everything-you-need-to-know-about-vgg16-7315defb5918 
+6. https://medium.com/@mygreatlearning/everything-you-need-to-know-about-vgg16-7315defb5918
+7. https://www.geeksforgeeks.org/understanding-googlenet-model-cnn-architecture/
 
 
 
