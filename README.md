@@ -325,6 +325,8 @@ The model performance in the dataset is satisfactory. The model accuracy and los
 
 ![Transforming the images](https://raw.githubusercontent.com/CarolineGraebelBHT/LFI_Artstyle_Classification/main/Naim/googlenet_modelaccuracy.png)
 
+The bar plot below visualizes the accuracy of classifying the art style in the validation set. Most of the classifications performed well (above 80%) for the art styles, except for Post Impressionism, Synthetic Cubism, Realism, Contemporary Realism, Early Renaissance, Mannerism Late Renaissance and High Renaissance. Abstract Expressionism obtained the highest accuracy in the validation set at **92.2%**. 
+
 ![Transforming the images](https://raw.githubusercontent.com/CarolineGraebelBHT/LFI_Artstyle_Classification/main/Naim/googlenet_modelclassaccuracy.png)
 
 # Resources
